@@ -8,3 +8,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Fitness"
 include ':app'
+include ':home'
+include ':core'
+include ':usecases'
