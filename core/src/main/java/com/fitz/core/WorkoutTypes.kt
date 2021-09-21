@@ -8,13 +8,13 @@ enum class WorkoutTypes(val displayName: String) {
     PLANKS("Push-ups"),
     CHIN_UPS("Chin-ups"),
     CRUNCHES("Crunches"),
-    UNKNOWN("");
+    UNKNOWN("Custom");
 
     companion object {
         fun getValueOf(name: String?) : WorkoutTypes? {
             return name?.let {
                 try {
-                    valueOf(it)
+                    values().firstOrNull { enumEntry -> enumEntry.displayName == name } ?: valueOf(it)
                 } catch (e: IllegalArgumentException) {
                     UNKNOWN
                 }

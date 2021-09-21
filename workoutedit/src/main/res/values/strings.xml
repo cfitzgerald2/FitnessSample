@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Workout Edit</string>
+    <string name="repetitions_text">Repetitions</string>
+    <string name="date_text">Date</string>
+    <string name="workout_type_text">Workout type</string>
+    <string name="cancel_text">Cancel</string>
+    <string name="save_text">Save</string>
+    <string name="create_text">Create</string>
+</resources>

@@ -1,10 +1,7 @@
 package com.fitz.core.repository.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
+import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import androidx.room.Query
 import com.fitz.core.WorkoutTypes
 import com.fitz.core.repository.models.Workout
 
@@ -19,6 +16,9 @@ interface WorkoutDAO {
 
     @Insert(onConflict = REPLACE)
     suspend fun addWorkout(workout: Workout)
+
+    @Update(onConflict = REPLACE)
+    suspend fun updateWorkout(workout: Workout)
 
     @Delete
     suspend fun deleteWorkout(workout: Workout)

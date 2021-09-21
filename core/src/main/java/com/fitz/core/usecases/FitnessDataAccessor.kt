@@ -1,5 +1,6 @@
 package com.fitz.core.usecases
 
+import androidx.lifecycle.LiveData
 import com.fitz.core.WorkoutTypes
 import com.fitz.core.repository.models.Workout
 import com.fitz.core.repository.usecases.WorkoutDataAccessor
@@ -32,4 +33,11 @@ class FitnessDataAccessor @Inject constructor(private val repository: WorkoutRep
         repository.deleteWorkout(itemToDelete)
     }
 
+    override suspend fun update(updatedValue: Workout) {
+        repository.updateWorkout(updatedValue)
+    }
+
+    override fun getObservable(): LiveData<List<Workout>> {
+        return repository.allWorkoutsObservable
+    }
 }

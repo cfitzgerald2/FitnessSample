@@ -1,10 +1,12 @@
-package com.fitz.home.view
+package com.fitz.home.view.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.ScrollableState
@@ -29,12 +31,16 @@ import com.fitz.home.theme.FitnessTheme
 import com.fitz.home.view.composables.WorkoutCell
 import com.fitz.home.view.composables.text.Title
 import com.fitz.home.viewmodel.WorkoutViewModel
+import com.fitz.usecases.navigation.AppNavigation
+import com.fitz.usecases.navigation.AppNavigation.Companion.WORKOUT_ARGUMENT_KEY
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 /**
  * entry page of the app
  */
+
+@ExperimentalFoundationApi
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -42,6 +48,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // observe to verify the transformation is carried out
+        viewModel.workoutTransformation.observe(this) {}
 
         setContent {
             FitnessTheme {
@@ -54,10 +63,13 @@ class MainActivity : ComponentActivity() {
                 }
                 Page(
                     viewModel.allWords,
-                    {
-                        selectedWorkout.value = it
+                    { workout ->
+                        selectedWorkout.value = workout
                         showDialogState.value = true
                     } ,
+                    { workout ->
+                        launchEditFlow(workout)
+                    },
                     {
                         viewModel.addWorkoutAsync(Workout(Date(), WorkoutTypes.CRUNCHES, 20))
                     }
@@ -114,10 +126,17 @@ class MainActivity : ComponentActivity() {
             }
         )
     }
+
+    private fun launchEditFlow(workout: Workout) {
+        val intent = Intent(this, (application as AppNavigation).getEditActivity())
+        intent.putExtra(WORKOUT_ARGUMENT_KEY, workout)
+        this.startActivity(intent)
+    }
 }
 
+@ExperimentalFoundationApi
 @Composable
-fun Page(workouts: MutableState<List<Workout>>, cellOnClick: (Workout) -> Unit, fabOnclick: () -> Unit) {
+fun Page(workouts: MutableState<List<Workout>>, cellOnClick: (Workout) -> Unit, cellOnLongClick: (Workout) -> Unit, fabOnclick: () -> Unit) {
     Surface(color = MaterialTheme.colors.background) {
         Scaffold(floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -137,13 +156,14 @@ fun Page(workouts: MutableState<List<Workout>>, cellOnClick: (Workout) -> Unit, 
                     Title(text = "Fitness")
                 }
                 this.items(workouts.value.size) { workout ->
-                    WorkoutCell(workout = workouts.value[workout], onClick = cellOnClick)
+                    WorkoutCell(workout = workouts.value[workout], onClick = cellOnClick, onLongClick = cellOnLongClick)
                 }
             }
         }
     }
 }
 
+@ExperimentalFoundationApi
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
@@ -155,6 +175,6 @@ fun DefaultPreview() {
         )
     }
     FitnessTheme {
-        Page(state, {}, {})
+        Page(state, {}, {}, {})
     }
 }

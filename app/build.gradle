@@ -45,6 +45,8 @@ android {
 dependencies {
     implementation project(':home')
     implementation project(':core')
+    implementation project(':workoutedit')
+    implementation project(':usecases')
 
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"

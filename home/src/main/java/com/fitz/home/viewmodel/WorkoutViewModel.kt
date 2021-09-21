@@ -2,6 +2,8 @@ package com.fitz.home.viewmodel
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitz.core.repository.models.Workout
@@ -18,6 +20,11 @@ import javax.inject.Inject
 class WorkoutViewModel @Inject constructor(private val accessor: WorkoutDataAccessor): ViewModel() {
 
     val allWords: MutableState<List<Workout>> = mutableStateOf(listOf())
+
+    val workoutTransformation: LiveData<Boolean> = Transformations.map(accessor.getObservable()) {
+        allWords.value = it
+        true
+    }
 
     private suspend fun getAllWorkouts() {
         allWords.value = accessor.getAll()
